@@ -1,0 +1,18 @@
+.vertex {
+    width: 25px;
+    height: 25px;
+    outline: 1px solid rgb(175, 216, 248);
+    display: inline-block;
+}
+
+.vertex-finish {
+    background-color: red;
+}
+
+.vertex-start {
+    background-color: green;
+}
+
+.vertex-wall {
+    background-color: rgb(12, 53, 71);
+}

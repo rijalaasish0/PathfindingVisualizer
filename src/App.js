@@ -1,8 +1,9 @@
+import PathfindingVisualizer from './Components/PathfindingVisualizer';
 
 const App = () => {
   return (
     <div className="App">
-      <h1>Pathfinding Visualizer</h1>
+      <PathfindingVisualizer></PathfindingVisualizer>
     </div>
   );
 }
