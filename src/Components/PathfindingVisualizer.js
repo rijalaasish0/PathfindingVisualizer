@@ -100,7 +100,7 @@ const PathfindingVisualizer = () => {
     return (
         <div>
             <h2>Pathfinding Visualizer</h2>
-            <button onClick={clearWalls}>Clear Grid</button>
+            <button onClick={clearWalls}>Clear Walls</button>
             <table
                 className="grid-container">
                 <tbody className="grid">
