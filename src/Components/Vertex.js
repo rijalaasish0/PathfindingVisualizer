@@ -10,7 +10,7 @@ const Vertex = ({colNum, isFinish, isStart, isWall, onMouseDown, onMouseEnter, o
             <td
                 id={`vertex-${rowNum}-${colNum}`}
                 className={`vertex ${vertexClassName}`}
-
+                onMouseDown={()=>onMouseDown(rowNum, colNum)}
             >
             
             </td>

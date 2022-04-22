@@ -1,5 +1,5 @@
 import './App.css';
-import PathfindingVisualizer from './Components/PathfindingVisualizer';
+import PathfindingVisualizer from './components/PathfindingVisualizer';
 
 const App = () => {
   return (

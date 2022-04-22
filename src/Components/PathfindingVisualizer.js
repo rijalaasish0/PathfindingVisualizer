@@ -17,10 +17,12 @@ const PathfindingVisualizer = () => {
     const [curCol, setCurCol] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
 
+    const [mouseIsPressed, setMouseIsPressed] = useState(false);
+
     useEffect(() => {
         const grid = getInitialGrid();
         setGrid(grid);
-    });
+    }, []);
 
 
     const getInitialGrid = (rowCount = row_count, colCount = col_count) => {
@@ -55,9 +57,40 @@ const PathfindingVisualizer = () => {
                 Math.abs(finish_vertex_col - col),
             isVisited: false,
             isWall: false,
-            previousNode: null,
-            isNode: true
+            previousVertex: null,
+            isVertex: true
         }
+    }
+
+    const handleMouseDownEvent = (row, col) => {
+        if (document.getElementById(`vertex-${row}-${col}`).className === 'vertex vertex-finish') {
+            setIsStartVertex(true);
+        }
+        else if (document.getElementById(`vertex-${row}-${col}`).className === 'vertex vertex-start') {
+            setIsFinishVertex(true);
+        } else {
+            const newGrid = getNewGridWithWallToggled(grid, row, col);
+            setGrid(newGrid);
+            console.log(row);
+            setIsWallVertex(true);
+        }
+        setMouseIsPressed(true);
+        setCurRow(row);
+        setCurCol(col);
+    }
+
+    const getNewGridWithWallToggled = (grid, row, col) => {
+        const newGrid = grid.slice();
+        const vertex = newGrid[row][col];
+
+        if (!vertex.isStart && !vertex.isFinish && vertex.isVertex) {
+            const newVertex = {
+                ...vertex,
+                isWall: !vertex.isWall
+            };
+            newGrid[row][col] = newVertex;
+        }
+        return newGrid;
     }
 
     return (
@@ -74,11 +107,12 @@ const PathfindingVisualizer = () => {
                                     return (
                                         <Vertex
                                             key={vertexIdx}
-                                            col={col}
-                                            row={row}
+                                            colNum={col}
+                                            rowNum={row}
                                             isFinish={isFinish}
                                             isStart={isStart}
                                             isWall={isWall}
+                                            onMouseDown={(row, col) => handleMouseDownEvent(row, col)}
                                         ></Vertex>
                                     );
                                 })}
