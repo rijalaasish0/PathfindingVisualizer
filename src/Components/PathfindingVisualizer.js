@@ -71,12 +71,16 @@ const PathfindingVisualizer = () => {
         } else {
             const newGrid = getNewGridWithWallToggled(grid, row, col);
             setGrid(newGrid);
-            console.log(row);
             setIsWallVertex(true);
         }
         setMouseIsPressed(true);
         setCurRow(row);
         setCurCol(col);
+    }
+
+    const clearWalls = () => {
+        const newGrid = getInitialGrid();
+        setGrid(newGrid);
     }
 
     const getNewGridWithWallToggled = (grid, row, col) => {
@@ -96,6 +100,7 @@ const PathfindingVisualizer = () => {
     return (
         <div>
             <h2>Pathfinding Visualizer</h2>
+            <button onClick={clearWalls}>Clear Grid</button>
             <table
                 className="grid-container">
                 <tbody className="grid">
