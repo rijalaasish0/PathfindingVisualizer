@@ -1,3 +1,4 @@
+import './Vertex.css'
 const Vertex = ({colNum, isFinish, isStart, isWall, onMouseDown, onMouseEnter, onMouseUp, rowNum}) => {
     const vertexClassName = 
         isFinish ? 'vertex-finish' :

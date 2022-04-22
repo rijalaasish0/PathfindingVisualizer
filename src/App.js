@@ -1,3 +1,4 @@
+import './App.css';
 import PathfindingVisualizer from './Components/PathfindingVisualizer';
 
 const App = () => {

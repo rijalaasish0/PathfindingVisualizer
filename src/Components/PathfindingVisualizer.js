@@ -1,14 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import Vertex from './Vertex';
+import './PathfindingVisualizer.css'
 
 const PathfindingVisualizer = () => {
     const [grid, setGrid] = useState([]);
     const [START_VERTEX_ROW, setStartVertexRow] = useState(0);
-    const [FINISH_Vertex_ROW, setFinishVertexRow] = useState(0);
-    const [START_Vertex_COL, setStartVertexCol] = useState(0);
+    const [FINISH_Vertex_ROW, setFinishVertexRow] = useState(10);
+    const [START_Vertex_COL, setStartVertexCol] = useState(10);
     const [FINISH_Vertex_COL, setFinishVertexCol] = useState(0);
-    const [row_count, setRowCount] = useState(10);
-    const [col_count, setColCount] = useState(10);
+    const [row_count, setRowCount] = useState(20);
+    const [col_count, setColCount] = useState(20);
     const [isStartVertex, setIsStartVertex] = useState(false);
     const [isFinishVertex, setIsFinishVertex] = useState(false);
     const [isWallVertex, setIsWallVertex] = useState(false);
@@ -17,12 +18,12 @@ const PathfindingVisualizer = () => {
     const [isRunning, setIsRunning] = useState(false);
 
     useEffect(() => {
-        const grid = getInitialGrid(10, 10);
-        setGrid({grid});
+        const grid = getInitialGrid();
+        setGrid(grid);
     });
 
 
-    const getInitialGrid = (rowCount, colCount) => {
+    const getInitialGrid = (rowCount = row_count, colCount = col_count) => {
         const initialGrid = [];
         for (let row = 0; row < rowCount; row++) {
           const currentRow = [];
@@ -61,7 +62,7 @@ const PathfindingVisualizer = () => {
 
     return(
         <div>
-            <h2>Hello World</h2>
+            <h2>Pathfinding Visualizer</h2>
             <table
                 className="grid-container">
                     <tbody className = "grid">
