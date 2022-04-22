@@ -1,16 +1,17 @@
 .vertex {
-    width: 40px;
-    height: 40px;
-    outline: 1px solid rgb(175, 216, 248);
+    width: 50px;
+    height: 50px;
+    outline: 1px solid #69b9c9;
     display: inline-block;
+    border-radius: 10%;
 }
 
 .vertex-finish {
-    background-color: red;
+    background-color: rgb(233, 77, 77);
 }
 
 .vertex-start {
-    background-color: green;
+    background-color: rgb(70, 176, 70);
 }
 
 .vertex-wall {
