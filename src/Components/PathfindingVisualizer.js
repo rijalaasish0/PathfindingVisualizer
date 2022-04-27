@@ -5,12 +5,12 @@ import './PathfindingVisualizer.css'
 
 const PathfindingVisualizer = () => {
     const [grid, setGrid] = useState([]);
-    const [start_vertex_row, setStartVertexRow] = useState(4);
-    const [finish_vertex_row, setFinishVertexRow] = useState(10);
-    const [start_vertex_col, setStartVertexCol] = useState(10);
-    const [finish_vertex_col, setFinishVertexCol] = useState(19);
-    const [row_count, setRowCount] = useState(15);
-    const [col_count, setColCount] = useState(20);
+    const [start_vertex_row, setStartVertexRow] = useState(0);
+    const [finish_vertex_row, setFinishVertexRow] = useState(49);
+    const [start_vertex_col, setStartVertexCol] = useState(0);
+    const [finish_vertex_col, setFinishVertexCol] = useState(49);
+    const [row_count, setRowCount] = useState(50);
+    const [col_count, setColCount] = useState(50);
     const [isStartVertex, setIsStartVertex] = useState(false);
     const [isFinishVertex, setIsFinishVertex] = useState(false);
     const [isWallVertex, setIsWallVertex] = useState(false);
@@ -47,6 +47,7 @@ const PathfindingVisualizer = () => {
     }
 
     const createVertex = (row, col) => {
+        let genNum = Math.floor(Math.random() * 100);
         return {
             row,
             col,
@@ -61,7 +62,7 @@ const PathfindingVisualizer = () => {
                 Math.abs(finish_vertex_row - row) +
                 Math.abs(finish_vertex_col - col),
             isVisited: false,
-            isWall: false,
+            isWall: genNum < 40,
             previousVertex: null,
             isVertex: true
         }
@@ -198,6 +199,7 @@ const PathfindingVisualizer = () => {
                     let start = performance.now();
                     visitedVerticesInOrder = AStar(grid, startVertex, finishVertex);
                     let end = performance.now();
+                    console.log(visitedVerticesInOrder.length);
                     console.log(`Call to A* took ${end - start} milliseconds.`); break;
                 default:
                     break;
@@ -269,6 +271,7 @@ const PathfindingVisualizer = () => {
 
     return (
         <div>
+            <center>
             <h2>Pathfinding Visualizer</h2>
             <button onClick={clearWalls}>Clear Walls</button>
             <button onClick={clearGrid}>Clear Grid</button>
@@ -306,6 +309,7 @@ const PathfindingVisualizer = () => {
                     })}
                 </tbody>
             </table>
+            </center>
         </div >
 
     );
