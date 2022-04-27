@@ -11,6 +11,7 @@ const Vertex = ({colNum, isFinish, isStart, isWall, onMouseDown, onMouseEnter, o
                 id={`vertex-${rowNum}-${colNum}`}
                 className={`vertex ${vertexClassName}`}
                 onMouseDown={()=>onMouseDown(rowNum, colNum)}
+                onMouseUp={()=>onMouseUp(rowNum, colNum)}
             >
             
             </td>

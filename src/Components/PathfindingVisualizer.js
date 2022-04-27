@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Vertex from './Vertex';
+import { AStar } from '../algorithms/astar';
 import './PathfindingVisualizer.css'
 
 const PathfindingVisualizer = () => {
@@ -20,8 +21,8 @@ const PathfindingVisualizer = () => {
     const [mouseIsPressed, setMouseIsPressed] = useState(false);
 
     useEffect(() => {
-        const grid = getInitialGrid();
-        setGrid(grid);
+        const newGrid = getInitialGrid();
+        setGrid(newGrid);
     }, []);
 
 
@@ -38,7 +39,11 @@ const PathfindingVisualizer = () => {
     }
 
     const toggleIsRunning = () => {
-        setIsRunning(!isRunning);
+        if (isRunning) {
+            setIsRunning(false);
+        } else {
+            setIsRunning(true);
+        }
     }
 
     const createVertex = (row, col) => {
@@ -63,19 +68,102 @@ const PathfindingVisualizer = () => {
     }
 
     const handleMouseDownEvent = (row, col) => {
-        if (document.getElementById(`vertex-${row}-${col}`).className === 'vertex vertex-finish') {
-            setIsStartVertex(true);
-        }
-        else if (document.getElementById(`vertex-${row}-${col}`).className === 'vertex vertex-start') {
-            setIsFinishVertex(true);
+        if (isGridClear()) {
+
+
+            if (document.getElementById(`vertex-${row}-${col}`).className === 'vertex vertex-finish') {
+                setIsFinishVertex(true);
+                setMouseIsPressed(true);
+                setCurRow(row);
+                setCurCol(col);
+                console.log("FINISH!");
+            }
+            else if (document.getElementById(`vertex-${row}-${col}`).className === 'vertex vertex-start') {
+                setMouseIsPressed(true);
+                setCurRow(row);
+                setCurCol(col);
+                setIsStartVertex(true);
+                console.log("START");
+            } else {
+                const newGrid = getNewGridWithWallToggled(grid, row, col);
+                setGrid(newGrid);
+                setMouseIsPressed(true);
+                setCurRow(row);
+                setCurRow(col);
+                setIsWallVertex(true);
+            }
         } else {
-            const newGrid = getNewGridWithWallToggled(grid, row, col);
-            setGrid(newGrid);
-            setIsWallVertex(true);
+            // clearGrid();
         }
-        setMouseIsPressed(true);
-        setCurRow(row);
-        setCurCol(col);
+    }
+
+    const isGridClear = () => {
+        for (const row of grid) {
+            for (const vertex of row) {
+                const vertexClassName = document.getElementById(`vertex-${vertex.row}-${vertex.col}`).className;
+                if (vertexClassName === 'vertex vertex-visited' || vertexClassName === 'vertex vertex-shortest-path') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    const clearGrid = () => {
+        const newGrid = grid.slice();
+        for (const row of newGrid) {
+            for (const vertex of row) {
+                let vertexClassName = document.getElementById(`vertex-${vertex.row}-${vertex.col}`).className;
+                if (vertexClassName !== 'vertex vertex-start' && vertexClassName !== 'vertex vertex-finish' && vertexClassName !== 'vertex vertex-wall') {
+                    document.getElementById(`vertex-${vertex.row}-${vertex.col}`).className = 'vertex';
+                    vertex.isVisited = false;
+                    vertex.distance = Infinity;
+                    vertex.distanceToFinishVertex =
+                        Math.abs(finish_vertex_row - vertex.row) +
+                        Math.abs(finish_vertex_col - vertex.col);
+                }
+
+                if (vertexClassName === 'vertex vertex-finish') {
+                    vertex.isVisited = false;
+                    vertex.distance = Infinity;
+                    vertex.distanceToFinishVertex = 0;
+                    vertex.isFinish = true;
+                    vertex.isWall = false;
+                    vertex.isVertex = true;
+                }
+
+                if (vertexClassName === 'vertex vertex-start') {
+                    vertex.isVisited = false;
+                    vertex.distance = Infinity;
+                    vertex.distanceToFinishVertex =
+                        Math.abs(finish_vertex_row - vertex.row) +
+                        Math.abs(finish_vertex_col - vertex.col);
+                    vertex.isStart = true;
+                    vertex.isWall = false;
+                    vertex.previousVertex = null;
+                    vertex.isVertex = true;
+                }
+            }
+        }
+        toggleIsRunning();
+    }
+
+    const handleMouseUp = (row, col) => {
+        setMouseIsPressed(false);
+        if (isStartVertex) {
+            setIsStartVertex(false);
+            setStartVertexRow(row);
+            setStartVertexCol(col);
+
+            console.log("Start moved!!")
+        } else if (isFinishVertex) {
+            setIsFinishVertex(false);
+            setFinishVertexRow(row);
+            setFinishVertexCol(col);
+
+            console.log("Finish moved!!");
+        }
+
     }
 
     const clearWalls = () => {
@@ -97,10 +185,100 @@ const PathfindingVisualizer = () => {
         return newGrid;
     }
 
+    const visualize = (algo) => {
+        console.log(isRunning);
+        if (!isRunning) {
+            toggleIsRunning();
+            const startVertex = grid[start_vertex_row][start_vertex_col];
+            const finishVertex = grid[finish_vertex_row][finish_vertex_col];
+
+            let visitedVerticesInOrder;
+            switch (algo) {
+                case 'AStar':
+                    let start = performance.now();
+                    visitedVerticesInOrder = AStar(grid, startVertex, finishVertex);
+                    let end = performance.now();
+                    console.log(`Call to A* took ${end - start} milliseconds.`); break;
+                default:
+                    break;
+            }
+            const verticesInShortestPathOrder = getVerticesInShortestPathOrder(finishVertex);
+            verticesInShortestPathOrder.push('end');
+            animate(visitedVerticesInOrder, verticesInShortestPathOrder);
+        }
+
+    }
+
+    const animate = (visitedVerticesInOrder, verticesInShortestPathOrder) => {
+        for (let i = 0; i <= visitedVerticesInOrder.length; i++) {
+            if (i === visitedVerticesInOrder.length) {
+                setTimeout(() => {
+                    animateShortestPath(verticesInShortestPathOrder);
+                }, 10 * i);
+                return;
+            }
+            setTimeout(() => {
+                const vertex = visitedVerticesInOrder[i];
+                const vertexClassName = document.getElementById(
+                    `vertex-${vertex.row}-${vertex.col}`,
+                ).className;
+                if (
+                    vertexClassName !== 'vertex vertex-start' &&
+                    vertexClassName !== 'vertex vertex-finish'
+                ) {
+                    document.getElementById(`vertex-${vertex.row}-${vertex.col}`).className =
+                        'vertex vertex-visited';
+                }
+            }, 10 * i);
+        }
+    }
+
+    const animateShortestPath = (verticesInShortestPathOrder) => {
+        for (let i = 0; i < verticesInShortestPathOrder.length; i++) {
+            if (verticesInShortestPathOrder[i] === 'end') {
+                setTimeout(() => {
+                    toggleIsRunning();
+                }, i * 50);
+            } else {
+                setTimeout(() => {
+                    const vertex = verticesInShortestPathOrder[i];
+                    const vertexClassName = document.getElementById(
+                        `vertex-${vertex.row}-${vertex.col}`,
+                    ).className;
+                    if (
+                        vertexClassName !== 'vertex vertex-start' &&
+                        vertexClassName !== 'vertex vertex-finish'
+                    ) {
+                        document.getElementById(`vertex-${vertex.row}-${vertex.col}`).className =
+                            'vertex vertex-shortest-path';
+                    }
+                }, i * 40);
+            }
+        }
+    }
+
+    const getVerticesInShortestPathOrder = (finishVertex) => {
+        const verticesInShortestPathOrder = [];
+        let currentVertex = finishVertex;
+        while (currentVertex !== null) {
+            verticesInShortestPathOrder.unshift(currentVertex);
+            currentVertex = currentVertex.previousVertex;
+        }
+        return verticesInShortestPathOrder;
+    }
+
     return (
         <div>
             <h2>Pathfinding Visualizer</h2>
             <button onClick={clearWalls}>Clear Walls</button>
+            <button onClick={clearGrid}>Clear Grid</button>
+
+            <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => visualize('AStar')}>
+                A* Algorithm
+            </button>
             <table
                 className="grid-container">
                 <tbody className="grid">
@@ -118,6 +296,8 @@ const PathfindingVisualizer = () => {
                                             isStart={isStart}
                                             isWall={isWall}
                                             onMouseDown={(row, col) => handleMouseDownEvent(row, col)}
+                                            onMouseUp={(row, col) => handleMouseUp(row, col)}
+
                                         ></Vertex>
                                     );
                                 })}
@@ -126,7 +306,7 @@ const PathfindingVisualizer = () => {
                     })}
                 </tbody>
             </table>
-        </div>
+        </div >
 
     );
 }
