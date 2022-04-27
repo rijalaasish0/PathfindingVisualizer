@@ -17,13 +17,15 @@ const PathfindingVisualizer = () => {
     const [curRow, setCurRow] = useState(0);
     const [curCol, setCurCol] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
+    const [wallPercentage, setWallPercentage] = useState(0);
 
     const [mouseIsPressed, setMouseIsPressed] = useState(false);
 
     useEffect(() => {
         const newGrid = getInitialGrid();
         setGrid(newGrid);
-    }, []);
+        console.log("HI!");
+    }, [wallPercentage, row_count]);
 
 
     const getInitialGrid = (rowCount = row_count, colCount = col_count) => {
@@ -62,7 +64,7 @@ const PathfindingVisualizer = () => {
                 Math.abs(finish_vertex_row - row) +
                 Math.abs(finish_vertex_col - col),
             isVisited: false,
-            isWall: genNum < 40,
+            isWall: genNum < wallPercentage,
             previousVertex: null,
             isVertex: true
         }
@@ -168,6 +170,7 @@ const PathfindingVisualizer = () => {
     }
 
     const clearWalls = () => {
+        clearGrid();
         const newGrid = getInitialGrid();
         setGrid(newGrid);
     }
@@ -269,46 +272,76 @@ const PathfindingVisualizer = () => {
         return verticesInShortestPathOrder;
     }
 
+    const updateWallPercentage = (e) => {
+        setWallPercentage(parseInt(e.target.value));
+        const newGrid = getInitialGrid();
+        setGrid(newGrid);
+    }
+
+    const updateSize = (e) => {
+        setColCount(parseInt(e.target.value));
+        setRowCount(parseInt(e.target.value));
+        setFinishVertexCol(parseInt(e.target.value) - 1);
+        setFinishVertexRow(parseInt(e.target.value) - 1);
+        const newGrid = getInitialGrid();
+        setGrid(newGrid);
+    }
+
     return (
         <div>
             <center>
-            <h2>Pathfinding Visualizer</h2>
-            <button onClick={clearWalls}>Clear Walls</button>
-            <button onClick={clearGrid}>Clear Grid</button>
+                <h2>Pathfinding Visualizer</h2>
+                <button onClick={clearWalls}>Clear Walls</button>
+                <button onClick={clearGrid}>Clear Grid</button>
+                {/* <select name="wallPer" id="wallPer" onChange={updateWallPercentage}>
+                    <option value="0">0%</option>
+                    <option value="10">10%</option>
+                    <option value="20">20%</option>
+                    <option value="30">30%</option>
+                    <option value="40">40%</option>
+                    <option value="50">50%</option>
+                </select> */}
+                <p>
+                    Walls Percentage: <input type="range" min="0" max="100" value={wallPercentage} onChange={updateWallPercentage} className="slider"></input>
+                    {wallPercentage}%
+                </p>
+                <p>
+                    Grid size: <input type="range" min="30" max="100" value={row_count} onChange={updateSize} className="sizeSlider"></input>
+                    {row_count}*{col_count}
+                </p>
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => visualize('AStar')}>
+                    A* Algorithm
+                </button>
+                <table
+                    className="grid-container">
+                    <tbody className="grid">
+                        {grid.map((row, rowIdx) => {
+                            return (
+                                <tr key={rowIdx}>
+                                    {row.map((vertex, vertexIdx) => {
+                                        const { row, col, isFinish, isStart, isWall } = vertex;
+                                        return (
+                                            <Vertex
+                                                key={vertexIdx}
+                                                colNum={col}
+                                                rowNum={row}
+                                                isFinish={isFinish}
+                                                isStart={isStart}
+                                                isWall={isWall}
+                                                onMouseDown={(row, col) => handleMouseDownEvent(row, col)}
+                                                onMouseUp={(row, col) => handleMouseUp(row, col)}
 
-            <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => visualize('AStar')}>
-                A* Algorithm
-            </button>
-            <table
-                className="grid-container">
-                <tbody className="grid">
-                    {grid.map((row, rowIdx) => {
-                        return (
-                            <tr key={rowIdx}>
-                                {row.map((vertex, vertexIdx) => {
-                                    const { row, col, isFinish, isStart, isWall } = vertex;
-                                    return (
-                                        <Vertex
-                                            key={vertexIdx}
-                                            colNum={col}
-                                            rowNum={row}
-                                            isFinish={isFinish}
-                                            isStart={isStart}
-                                            isWall={isWall}
-                                            onMouseDown={(row, col) => handleMouseDownEvent(row, col)}
-                                            onMouseUp={(row, col) => handleMouseUp(row, col)}
-
-                                        ></Vertex>
-                                    );
-                                })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+                                            ></Vertex>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </center>
         </div >
 
