@@ -12,10 +12,10 @@ export function BFS(grid, startVertex, finishVertex){
 
     while(nextVerticesStack.length){
         //remove the first item of the queue
-        const currentVertex = nextNodesStack.shift();
+        const currentVertex = nextVerticesStack.shift();
         //return the path if we reached the finish vertex
         if(currentVertex === finishVertex)
-            return visitedNodesInOrder;
+            return visitedVerticesInOrder;
         
         //otherwise, continue searching the graph
         if(!currentVertex.isWall && (currentVertex.isStart || !currentVertex.isVisited)){
@@ -53,4 +53,5 @@ export function BFS(grid, startVertex, finishVertex){
             }
         }
     }
+    return visitedVerticesInOrder;
 }

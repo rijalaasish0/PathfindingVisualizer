@@ -202,23 +202,17 @@ const PathfindingVisualizer = () => {
             let visitedVerticesInOrder;
             switch (algo) {
                 case 'AStar':
-                    let start = performance.now();
                     visitedVerticesInOrder = AStar(grid, startVertex, finishVertex);
-                    let end = performance.now();
                     console.log(visitedVerticesInOrder.length);
-                    console.log(`Call to A* took ${end - start} milliseconds.`); break;
+                    break;
                 case 'BFS':
-                    let start = peformance.now();
                     visitedVerticesInOrder = BFS(grid, startVertex, finishVertex);
-                    let end = performance.now();
                     console.log(visitedVerticesInOrder.length);
-                    console.log(`Call to A* took ${end - start} milliseconds.`); break;
+                    break;
                 case 'DFS':
-                    let start = performance.now();
                     visitedVerticesInOrder = DFS(grid, startVertex, finishVertex);
-                    let end = performance.now();
                     console.log(visitedVerticesInOrder.length);
-                    console.log(`Call to A* took ${end - start} milliseconds.`); break;
+                    break;
                 default:
                     break;
             }

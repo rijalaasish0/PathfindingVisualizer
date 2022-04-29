@@ -4,7 +4,7 @@ export function DFS(grid, startVertex, finishVertex){
     while(nextVerticesStack.length){
         const currentVertex = nextVerticesStack.pop();
 
-        if(currentVertex === finishNode) {
+        if(currentVertex === finishVertex) {
             return visitedVerticesInOrder;
         }
 
