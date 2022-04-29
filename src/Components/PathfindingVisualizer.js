@@ -18,6 +18,7 @@ const PathfindingVisualizer = () => {
     const [curCol, setCurCol] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [wallPercentage, setWallPercentage] = useState(0);
+    const [animationTime, setAnimationTime] = useState(10);
 
     const [mouseIsPressed, setMouseIsPressed] = useState(false);
 
@@ -219,7 +220,7 @@ const PathfindingVisualizer = () => {
             if (i === visitedVerticesInOrder.length) {
                 setTimeout(() => {
                     animateShortestPath(verticesInShortestPathOrder);
-                }, 10 * i);
+                }, animationTime * i);
                 return;
             }
             setTimeout(() => {
@@ -234,8 +235,12 @@ const PathfindingVisualizer = () => {
                     document.getElementById(`vertex-${vertex.row}-${vertex.col}`).className =
                         'vertex vertex-visited';
                 }
-            }, 10 * i);
+            }, animationTime * i);
         }
+    }
+
+    const updateAnimationTime = (e) => {
+        setAnimationTime(parseInt(e.target.value));
     }
 
     const animateShortestPath = (verticesInShortestPathOrder) => {
@@ -243,7 +248,7 @@ const PathfindingVisualizer = () => {
             if (verticesInShortestPathOrder[i] === 'end') {
                 setTimeout(() => {
                     toggleIsRunning();
-                }, i * 50);
+                }, i * animationTime * 5);
             } else {
                 setTimeout(() => {
                     const vertex = verticesInShortestPathOrder[i];
@@ -257,7 +262,7 @@ const PathfindingVisualizer = () => {
                         document.getElementById(`vertex-${vertex.row}-${vertex.col}`).className =
                             'vertex vertex-shortest-path';
                     }
-                }, i * 40);
+                }, i * animationTime * 4);
             }
         }
     }
@@ -308,6 +313,10 @@ const PathfindingVisualizer = () => {
                 <p>
                     Grid size: <input type="range" min="30" max="100" value={row_count} onChange={updateSize} className="sizeSlider"></input>
                     {row_count}*{col_count}
+                </p>
+                <p>
+                    Animation Time: <input type="range" min="1" max="10" value={animationTime} onChange={updateAnimationTime} className="animationSlider"></input>
+                    {animationTime}
                 </p>
                 <button
                     type="button"

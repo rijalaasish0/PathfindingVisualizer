@@ -3,27 +3,27 @@
 // by backtracking from the finish vertex.
 
 export function AStar(grid, startVertex, finishVertex) {
-    const visitedVertexsInOrder = [];
+    const visitedVerticesInOrder = [];
     startVertex.distance = 0;
-    const unvisitedVertexs = getAllVertexs(grid); // Q: different from using grid or slice of grid???
+    const unvisitedVertices = getAllVertices(grid); // Q: different from using grid or slice of grid???
   
-    while (unvisitedVertexs.length) {
-      sortByDistance(unvisitedVertexs);
-      const closestVertex = unvisitedVertexs.shift();
+    while (unvisitedVertices.length) {
+      sortByDistance(unvisitedVertices);
+      const closestVertex = unvisitedVertices.shift();
       // If we encounter a wall, we skip it.
       if (!closestVertex.isWall) {
         // If the closest vertex is at a distance of infinity,
         // we must be trapped and should stop.
-        if (closestVertex.distance === Infinity) return visitedVertexsInOrder;
+        if (closestVertex.distance === Infinity) return visitedVerticesInOrder;
         closestVertex.isVisited = true;
-        visitedVertexsInOrder.push(closestVertex);
-        if (closestVertex === finishVertex) return visitedVertexsInOrder;
+        visitedVerticesInOrder.push(closestVertex);
+        if (closestVertex === finishVertex) return visitedVerticesInOrder;
         updateUnvisitedNeighbors(closestVertex, grid);
       }
     }
   }
   
-  function getAllVertexs(grid) {
+  function getAllVertices(grid) {
     const vertices = [];
     for (const row of grid) {
       for (const vertex of row) {
@@ -33,8 +33,8 @@ export function AStar(grid, startVertex, finishVertex) {
     return vertices;
   }
   
-  function sortByDistance(unvisitedVertexs) {
-    unvisitedVertexs.sort((vertexA, vertexB) => vertexA.distance - vertexB.distance);
+  function sortByDistance(unvisitedVertices) {
+    unvisitedVertices.sort((vertexA, vertexB) => vertexA.distance - vertexB.distance);
   }
   
   function updateUnvisitedNeighbors(vertex, grid) {
