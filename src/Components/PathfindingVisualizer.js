@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Vertex from './Vertex';
 import { AStar } from '../algorithms/astar';
-import {BFS} from '../algorithms/bfs';
-import {DFS} from '../algorithms/dfs';
+import { BFS } from '../algorithms/bfs';
+import { DFS } from '../algorithms/dfs';
 import './PathfindingVisualizer.css'
 
 const PathfindingVisualizer = () => {
@@ -21,13 +21,12 @@ const PathfindingVisualizer = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [wallPercentage, setWallPercentage] = useState(0);
     const [animationTime, setAnimationTime] = useState(10);
-
+    const [allTests, setAllTests] = useState([]); // order: [AStar, BFS, DFS, Dijkstra]
     const [mouseIsPressed, setMouseIsPressed] = useState(false);
 
     useEffect(() => {
         const newGrid = getInitialGrid();
         setGrid(newGrid);
-        console.log("HI!");
     }, [wallPercentage, row_count]);
 
 
@@ -192,7 +191,8 @@ const PathfindingVisualizer = () => {
         return newGrid;
     }
 
-    const visualize = (algo) => {
+    const visualize = (algo, animatePath = true) => {
+        clearGrid();
         console.log(isRunning);
         if (!isRunning) {
             toggleIsRunning();
@@ -203,22 +203,27 @@ const PathfindingVisualizer = () => {
             switch (algo) {
                 case 'AStar':
                     visitedVerticesInOrder = AStar(grid, startVertex, finishVertex);
-                    console.log(visitedVerticesInOrder.length);
                     break;
                 case 'BFS':
                     visitedVerticesInOrder = BFS(grid, startVertex, finishVertex);
-                    console.log(visitedVerticesInOrder.length);
                     break;
                 case 'DFS':
                     visitedVerticesInOrder = DFS(grid, startVertex, finishVertex);
-                    console.log(visitedVerticesInOrder.length);
                     break;
                 default:
                     break;
             }
             const verticesInShortestPathOrder = getVerticesInShortestPathOrder(finishVertex);
-            verticesInShortestPathOrder.push('end');
-            animate(visitedVerticesInOrder, verticesInShortestPathOrder);
+
+            if (animatePath) {
+                console.log("Total Vertices Explored: " + visitedVerticesInOrder.length);
+                console.log("Shortest Path Length: " + (verticesInShortestPathOrder.length - 1));
+                verticesInShortestPathOrder.push('end');
+                animate(visitedVerticesInOrder, verticesInShortestPathOrder);
+            } else {
+                return [visitedVerticesInOrder.length, verticesInShortestPathOrder.length - 1]
+            }
+
         }
 
     }
@@ -300,6 +305,21 @@ const PathfindingVisualizer = () => {
         setGrid(newGrid);
     }
 
+    const runAll = async () => {
+
+        clearGrid();
+        let aStarResult = await visualize('AStar', false);
+        clearGrid();
+        let dfsResult = await visualize('DFS', false);
+        clearGrid();
+        let bfsResult = await visualize('BFS', false);
+        clearGrid();
+
+        if (aStarResult && dfsResult && bfsResult) {
+            window.open(`https://quickchart.io/chart?c={ type: 'bar', data: { labels: ['A*', 'BFS', 'DFS', 'Dijkstra'], datasets: [{ label: 'Total Vertices Explored', data: [${aStarResult[0]}, ${bfsResult[0]}, ${dfsResult[0]}, 0] }] } }`, "_blank");
+            window.open(`https://quickchart.io/chart?c={ type: 'bar', data: { labels: ['A*', 'BFS', 'DFS', 'Dijkstra'], datasets: [{ label: 'Shortest Path Found', data: [${aStarResult[1]}, ${bfsResult[1]}, ${dfsResult[1]}, 0] }] } }`, "_blank");
+        }
+    }
     return (
         <div>
             <center>
@@ -343,6 +363,12 @@ const PathfindingVisualizer = () => {
                     className="btn btn-primary"
                     onClick={() => visualize('DFS')}>
                     Depth First Search Algorithm
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => runAll()}>
+                    Test All (Beta)
                 </button>
                 <table
                     className="grid-container">
