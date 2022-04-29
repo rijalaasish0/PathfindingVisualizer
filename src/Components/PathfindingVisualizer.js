@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Vertex from './Vertex';
 import { AStar } from '../algorithms/astar';
+import {BFS} from '../algorithms/bfs';
+import {DFS} from '../algorithms/dfs';
 import './PathfindingVisualizer.css'
 
 const PathfindingVisualizer = () => {
@@ -205,6 +207,18 @@ const PathfindingVisualizer = () => {
                     let end = performance.now();
                     console.log(visitedVerticesInOrder.length);
                     console.log(`Call to A* took ${end - start} milliseconds.`); break;
+                case 'BFS':
+                    let start = peformance.now();
+                    visitedVerticesInOrder = BFS(grid, startVertex, finishVertex);
+                    let end = performance.now();
+                    console.log(visitedVerticesInOrder.length);
+                    console.log(`Call to A* took ${end - start} milliseconds.`); break;
+                case 'DFS':
+                    let start = performance.now();
+                    visitedVerticesInOrder = DFS(grid, startVertex, finishVertex);
+                    let end = performance.now();
+                    console.log(visitedVerticesInOrder.length);
+                    console.log(`Call to A* took ${end - start} milliseconds.`); break;
                 default:
                     break;
             }
@@ -323,6 +337,18 @@ const PathfindingVisualizer = () => {
                     className="btn btn-primary"
                     onClick={() => visualize('AStar')}>
                     A* Algorithm
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => visualize('BFS')}>
+                    Breadth First Search Algorithm
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => visualize('DFS')}>
+                    Depth First Search Algorithm
                 </button>
                 <table
                     className="grid-container">
