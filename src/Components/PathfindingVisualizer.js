@@ -18,12 +18,16 @@ const PathfindingVisualizer = () => {
     const [isWallVertex, setIsWallVertex] = useState(false);
     const [curRow, setCurRow] = useState(0);
     const [curCol, setCurCol] = useState(0);
-    const [isRunning, setIsRunning] = useState(false);
+    
     const [wallPercentage, setWallPercentage] = useState(0);
     const [animationTime, setAnimationTime] = useState(10);
     const [allTests, setAllTests] = useState([]); // order: [AStar, BFS, DFS, Dijkstra]
     const [mouseIsPressed, setMouseIsPressed] = useState(false);
 
+    let isRunning = false;
+    const setIsRunning = (running) => {
+        isRunning = running;
+    }
     useEffect(() => {
         const newGrid = getInitialGrid();
         setGrid(newGrid);
@@ -150,7 +154,7 @@ const PathfindingVisualizer = () => {
                 }
             }
         }
-        toggleIsRunning();
+        setIsRunning(false);
     }
 
     const handleMouseUp = (row, col) => {

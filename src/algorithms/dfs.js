@@ -45,4 +45,5 @@ export function DFS(grid, startVertex, finishVertex){
             }
         }
     }
+    return [1];
 }
