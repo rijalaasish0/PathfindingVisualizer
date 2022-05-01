@@ -7,9 +7,9 @@ import './PathfindingVisualizer.css'
 
 const PathfindingVisualizer = () => {
     const [grid, setGrid] = useState([]);
-    const [start_vertex_row, setStartVertexRow] = useState(0);
+    const [start_vertex_row, setStartVertexRow] = useState(30);
     const [finish_vertex_row, setFinishVertexRow] = useState(49);
-    const [start_vertex_col, setStartVertexCol] = useState(0);
+    const [start_vertex_col, setStartVertexCol] = useState(30);
     const [finish_vertex_col, setFinishVertexCol] = useState(49);
     const [row_count, setRowCount] = useState(50);
     const [col_count, setColCount] = useState(50);
@@ -18,10 +18,9 @@ const PathfindingVisualizer = () => {
     const [isWallVertex, setIsWallVertex] = useState(false);
     const [curRow, setCurRow] = useState(0);
     const [curCol, setCurCol] = useState(0);
-    
+
     const [wallPercentage, setWallPercentage] = useState(0);
     const [animationTime, setAnimationTime] = useState(10);
-    const [allTests, setAllTests] = useState([]); // order: [AStar, BFS, DFS, Dijkstra]
     const [mouseIsPressed, setMouseIsPressed] = useState(false);
 
     let isRunning = false;
@@ -31,7 +30,7 @@ const PathfindingVisualizer = () => {
     useEffect(() => {
         const newGrid = getInitialGrid();
         setGrid(newGrid);
-    }, [wallPercentage, row_count]);
+    }, [wallPercentage, row_count, start_vertex_col, start_vertex_col, finish_vertex_col, finish_vertex_row]);
 
 
     const getInitialGrid = (rowCount = row_count, colCount = col_count) => {
@@ -47,11 +46,7 @@ const PathfindingVisualizer = () => {
     }
 
     const toggleIsRunning = () => {
-        if (isRunning) {
-            setIsRunning(false);
-        } else {
-            setIsRunning(true);
-        }
+        isRunning = !isRunning;
     }
 
     const createVertex = (row, col) => {
@@ -67,8 +62,8 @@ const PathfindingVisualizer = () => {
                 col === finish_vertex_col,
             distance: Infinity,
             distanceToFinishVertex:
-                Math.abs(finish_vertex_row - row) +
-                Math.abs(finish_vertex_col - col),
+                Math.abs(finish_vertex_col - col)  + Math.abs(finish_vertex_row - row)
+            ,
             isVisited: false,
             isWall: genNum < wallPercentage,
             previousVertex: null,
@@ -311,19 +306,26 @@ const PathfindingVisualizer = () => {
 
     const runAll = async () => {
 
-        clearGrid();
         let aStarResult = await visualize('AStar', false);
-        clearGrid();
         let dfsResult = await visualize('DFS', false);
-        clearGrid();
         let bfsResult = await visualize('BFS', false);
-        clearGrid();
 
-        if (aStarResult && dfsResult && bfsResult) {
+        if (aStarResult.length > 1 && dfsResult.length && bfsResult) {
+            console.log("AStar:")
+            console.log(aStarResult);
+
+            console.log("BFS:")
+            console.log(bfsResult);
+
+            console.log("DFS:")
+            console.log(dfsResult);
+
+
             window.open(`https://quickchart.io/chart?c={ type: 'bar', data: { labels: ['A*', 'BFS', 'DFS', 'Dijkstra'], datasets: [{ label: 'Total Vertices Explored', data: [${aStarResult[0]}, ${bfsResult[0]}, ${dfsResult[0]}, 0] }] } }`, "_blank");
             window.open(`https://quickchart.io/chart?c={ type: 'bar', data: { labels: ['A*', 'BFS', 'DFS', 'Dijkstra'], datasets: [{ label: 'Shortest Path Found', data: [${aStarResult[1]}, ${bfsResult[1]}, ${dfsResult[1]}, 0] }] } }`, "_blank");
         }
     }
+
     return (
         <div>
             <center>
@@ -367,6 +369,12 @@ const PathfindingVisualizer = () => {
                     className="btn btn-primary"
                     onClick={() => visualize('DFS')}>
                     Depth First Search Algorithm
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => visualize('Dijkstra')}>
+                    Dijkstra's Algorithm
                 </button>
                 <button
                     type="button"
