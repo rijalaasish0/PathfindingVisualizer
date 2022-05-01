@@ -3,6 +3,7 @@ import Vertex from './Vertex';
 import { AStar } from '../algorithms/astar';
 import { BFS } from '../algorithms/bfs';
 import { DFS } from '../algorithms/dfs';
+import { dijkstra } from '../algorithms/dijkstra';
 import './PathfindingVisualizer.css'
 
 const PathfindingVisualizer = () => {
@@ -209,6 +210,8 @@ const PathfindingVisualizer = () => {
                 case 'DFS':
                     visitedVerticesInOrder = DFS(grid, startVertex, finishVertex);
                     break;
+                case 'Dijkstra':
+                    visitedVerticesInOrder = dijkstra(grid, startVertex, finishVertex);
                 default:
                     break;
             }
@@ -304,11 +307,12 @@ const PathfindingVisualizer = () => {
         setGrid(newGrid);
     }
 
-    const runAll = async () => {
+    const runAll = () => {
 
-        let aStarResult = await visualize('AStar', false);
-        let dfsResult = await visualize('DFS', false);
-        let bfsResult = await visualize('BFS', false);
+        let aStarResult = visualize('AStar', false);
+        let dfsResult = visualize('DFS', false);
+        let bfsResult = visualize('BFS', false);
+        let dijkstraResult = visualize('Dijkstra', false);
 
         if (aStarResult.length > 1 && dfsResult.length && bfsResult) {
             console.log("AStar:")
@@ -320,9 +324,12 @@ const PathfindingVisualizer = () => {
             console.log("DFS:")
             console.log(dfsResult);
 
+            console.log("Dijkstra:")
+            console.log(dijkstraResult);
 
-            window.open(`https://quickchart.io/chart?c={ type: 'bar', data: { labels: ['A*', 'BFS', 'DFS', 'Dijkstra'], datasets: [{ label: 'Total Vertices Explored', data: [${aStarResult[0]}, ${bfsResult[0]}, ${dfsResult[0]}, 0] }] } }`, "_blank");
-            window.open(`https://quickchart.io/chart?c={ type: 'bar', data: { labels: ['A*', 'BFS', 'DFS', 'Dijkstra'], datasets: [{ label: 'Shortest Path Found', data: [${aStarResult[1]}, ${bfsResult[1]}, ${dfsResult[1]}, 0] }] } }`, "_blank");
+
+            window.open(`https://quickchart.io/chart?c={ type: 'bar', data: { labels: ['A*', 'BFS', 'DFS', 'Dijkstra'], datasets: [{ label: 'Total Vertices Explored', data: [${aStarResult[0]}, ${bfsResult[0]}, ${dfsResult[0]}, ${dijkstraResult[0]}] }] } }`, "_blank");
+            window.open(`https://quickchart.io/chart?c={ type: 'bar', data: { labels: ['A*', 'BFS', 'DFS', 'Dijkstra'], datasets: [{ label: 'Shortest Path Found', data: [${aStarResult[1]}, ${bfsResult[1]}, ${dfsResult[1]}, ${dijkstraResult[1]}] }] } }`, "_blank");
         }
     }
 
